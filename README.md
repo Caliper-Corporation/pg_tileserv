@@ -2,6 +2,22 @@
 
 Vector tile server for PostgreSQL/PostGIS databases deployed in Kubernetes.
 
+## Repository Structure
+
+This repository maintains **two separate branches**:
+
+- **`main` branch** (this branch): Kubernetes deployment infrastructure
+  - Contains Dockerfile, Helm charts, GitHub Actions workflows
+  - Used for deploying pg_tileserv to our EKS cluster
+  - Pull and push deployment configuration changes here
+
+- **`master` branch**: Upstream pg_tileserv source code
+  - Synced with [CrunchyData/pg_tileserv](https://github.com/CrunchyData/pg_tileserv)
+  - Contains the Go source code for pg_tileserv
+  - Used for pulling upstream updates and building container images
+
+**Why separate branches?** This allows us to maintain deployment configs independently while easily syncing with upstream pg_tileserv improvements.
+
 ## Overview
 
 pg_tileserv is a high-performance vector tile server connected to our RDS PostgreSQL database. It serves map tiles for area layers exported from Maptitude to PostgreSQL tables.
@@ -226,7 +242,6 @@ pg_tileserv/
 │       ├── Chart.yaml
 │       ├── values.yaml         # Single values file
 │       └── templates/
-├── windows/                     # Windows dev executable
 └── README.md
 ```
 
@@ -235,6 +250,8 @@ pg_tileserv/
 - [Caliper pg_tileserv Fork](https://github.com/Caliper-Corporation/pg_tileserv)
 - [CrunchyData Original](https://github.com/CrunchyData/pg_tileserv)
 - [Deployment Checklist](DEPLOYMENT_CHECKLIST.md)
+
+## Middleware Considerations
 
 The middleware should at least:
 
