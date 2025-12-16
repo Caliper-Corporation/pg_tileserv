@@ -1,0 +1,19 @@
+{
+	"name": "pg_tileserv",
+	"version": "1.0.0",
+	"description": "Vector tile server for PostgreSQL/PostGIS databases deployed in Kubernetes",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Caliper-Corporation/pg_tileserv.git"
+	},
+	"keywords": [
+		"vector-tiles",
+		"postgresql",
+		"postgis",
+		"kubernetes",
+		"helm"
+	],
+	"author": "Caliper Corporation",
+	"license": "UNLICENSED",
+	"private": true
+}

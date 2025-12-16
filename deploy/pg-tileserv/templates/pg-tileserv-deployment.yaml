@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: '{{.Release.Name}}-deployment'
+  labels:
+    tags.datadoghq.com/env: {{.Values.env}}
+    tags.datadoghq.com/service: {{.Release.Name}}-service
+    tags.datadoghq.com/version: {{.Values.appVersion}}
+  annotations:
+    ad.datadoghq.com/{{.Release.Name}}.logs: '[{ "source": "pg_tileserv", "service": "{{.Release.Name}}" }]'
+spec:
+  selector:
+    matchLabels:
+      app: pg-tileserv
+      tenant: {{.Release.Name}}
+      env: {{.Values.env}}
+  replicas: 1
+  revisionHistoryLimit: 3
+  template:
+    metadata:
+      labels:
+        app: pg-tileserv
+        tenant: {{.Release.Name}}
+        env: {{.Values.env}}
+        tags.datadoghq.com/env: {{.Values.env}}
+        tags.datadoghq.com/service: {{.Release.Name}}-service
+        tags.datadoghq.com/version: {{.Values.appVersion}}
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: pg-tileserv
+          image: '{{.Values.containerRegistry}}/{{.Values.containerRepo}}:{{.Values.containerTag}}'
+          ports:
+            - containerPort: 7800
+          envFrom:
+            - configMapRef:
+                name: '{{.Release.Name}}-config'
+            - secretRef:
+                name: '{{.Release.Name}}-db-secret'
+          resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory | quote }}
+              cpu: {{ .Values.resources.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.limits.memory | quote }}
+              cpu: {{ .Values.resources.limits.cpu | quote }}
+          livenessProbe:
+            httpGet:
+              path: /index.json
+              port: 7800
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /index.json
+              port: 7800
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+          env:
+            - name: DD_ENV
+              value: {{.Values.env}}
+            - name: DD_VERSION
+              value: {{.Values.appVersion}}
+            - name: DD_SERVICE
+              value: {{.Release.Name}}-service
+            - name: DD_LOGS_INJECTION
+              value: "true"
+            - name: DD_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP

@@ -1,0 +1,4 @@
+# Configuration for the GitHub workflow deployment pipeline
+containerRegistry: 110683733147.dkr.ecr.us-east-1.amazonaws.com
+registryCredentials: ecr:us-east-1:github-actions
+helmChart: pg-tileserv

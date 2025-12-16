@@ -1,0 +1,67 @@
+name: Build, Push, and Deploy pg_tileserv
+
+on:
+    push:
+        branches:
+            - main
+
+env:
+    AWS_REGION: us-east-1
+
+jobs:
+    build-push-deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: ${{ env.AWS_REGION }}
+
+            - name: Log in to Amazon ECR
+              uses: aws-actions/amazon-ecr-login@v2
+
+            - name: Extract deployment config
+              run: |
+                  echo "CONTAINER_REGISTRY=$(yq '.containerRegistry' deploy/config.yaml)" >> $GITHUB_ENV
+                  echo "HELM_CHART=$(yq '.helmChart' deploy/config.yaml)" >> $GITHUB_ENV
+                  echo "VALUES_FILE=deploy/pg-tileserv/values.yaml" >> $GITHUB_ENV
+                  echo "NAMESPACE=default" >> $GITHUB_ENV
+                  CONTAINER_REPO=$(yq '.containerRepo' deploy/pg-tileserv/values.yaml)
+                  echo "CONTAINER_REPO=$CONTAINER_REPO" >> $GITHUB_ENV
+                  echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
+
+            - name: Build and push Docker image
+              run: |
+                  docker build . -t $CONTAINER_REGISTRY/$CONTAINER_REPO:$IMAGE_TAG
+                  docker push $CONTAINER_REGISTRY/$CONTAINER_REPO:$IMAGE_TAG
+
+            - name: Set up Helm
+              uses: azure/setup-helm@v4
+
+            - name: Decode kubeconfig
+              run: |
+                  echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > kubeconfig
+                  echo "KUBECONFIG=$PWD/kubeconfig" >> $GITHUB_ENV
+
+            - name: Deploy to Kubernetes with Helm
+              run: |
+                  RELEASE_NAME=$(yq '.releaseName' "$VALUES_FILE")
+                  helm upgrade --install "$RELEASE_NAME" \
+                    --namespace $NAMESPACE \
+                    --create-namespace \
+                    --set containerTag=$IMAGE_TAG \
+                    --values "$VALUES_FILE" \
+                    "deploy/$HELM_CHART"
+
+            - name: Clean up
+              if: always()
+              run: |
+                  docker rmi $CONTAINER_REGISTRY/$CONTAINER_REPO:$IMAGE_TAG || true

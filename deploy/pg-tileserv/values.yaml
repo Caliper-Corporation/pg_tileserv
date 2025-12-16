@@ -1,0 +1,20 @@
+imagePullSecret: ""
+containerRegistry: 110683733147.dkr.ecr.us-east-1.amazonaws.com
+containerRepo: pg-tileserv
+# The SHA tag of the container image (filled in by CI/CD pipeline):
+containerTag: ""
+appVersion: "1.0.0"
+env: shared
+releaseName: pg-tileserv
+
+# Single shared RDS instance for all environments
+# Replace with actual RDS endpoint
+databaseUrl: "postgresql://username:password@rds-endpoint.us-east-1.rds.amazonaws.com:5432/caliper"
+
+resources:
+  requests:
+    memory: "1Gi"
+    cpu: "500m"
+  limits:
+    memory: "2Gi"
+    cpu: "2000m"

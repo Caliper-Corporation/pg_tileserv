@@ -1,0 +1,4 @@
+apiVersion: v1
+name: pg-tileserv
+version: 1.0.0
+description: 'Vector tile server for PostgreSQL/PostGIS databases'
