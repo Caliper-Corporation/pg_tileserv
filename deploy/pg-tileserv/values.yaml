@@ -1,6 +1,6 @@
 imagePullSecret: ""
 containerRegistry: 110683733147.dkr.ecr.us-east-1.amazonaws.com
-containerRepo: pg-tileserv
+containerRepo: caliper/pg-tileserv
 # The SHA tag of the container image (filled in by CI/CD pipeline):
 containerTag: ""
 appVersion: "1.0.0"
