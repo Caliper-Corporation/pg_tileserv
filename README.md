@@ -59,21 +59,49 @@ http://localhost:7800/user_geometry.mcz7fn2m001x0wf35sfl_mcz7er6p001p2cnv98ne_de
 
 ## Local Development
 
-On Windows development machines, use the pre-packaged executable in the `windows/` subfolder.
+For local development, you can run pg_tileserv using Docker or download the pre-built binary.
 
-**Configuration**: `windows/pg_tileserv.toml`
+### Option 1: Docker (Recommended)
 
-**Backend Configuration** (`saas-backend/app/config/override.env.js`):
+```bash
+# Build the image
+docker build -t pg-tileserv:local .
+
+# Run with environment variable for database connection
+docker run -p 7800:7800 \
+  -e DATABASE_URL="postgresql://username:password@host.docker.internal:5432/caliper" \
+  pg-tileserv:local
+```
+
+### Option 2: Pre-built Binary
+
+Download the latest release from [CrunchyData releases](https://github.com/CrunchyData/pg_tileserv/releases) and run:
+
+```bash
+# Set database connection
+export DATABASE_URL="postgresql://username:password@localhost:5432/caliper"
+
+# Run the binary
+./pg_tileserv
+```
+
+### Backend Configuration
+
+Update your local backend configuration to point to the local tile server:
+
+**File**: `saas-backend/app/config/override.env.js`
 
 ```javascript
 DB_TILESERVER_URL: 'http://localhost:7800'
 ```
 
+**Access**: Navigate to `http://localhost:7800` to see the web UI and available layers.
+
 ## Deployment
 
 ### Prerequisites
 
-1. **AWS ECR**: Repository named `pg-tileserv`
+1. **AWS ECR**: Repository named `caliper/pg-tileserv`
 2. **GitHub Secrets**:
    - `AWS_ACCESS_KEY_ID`
    - `AWS_SECRET_ACCESS_KEY`
