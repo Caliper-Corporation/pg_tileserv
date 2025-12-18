@@ -12,6 +12,12 @@ releaseName: pg-tileserv
 # The secret name or ARN in AWS Secrets Manager containing the database URL
 databaseSecretArn: "pg-tileserv/database-url"
 
+# IAM Role ARN for External Secrets Operator service account (IRSA)
+# This role must have permissions to read from AWS Secrets Manager
+# SETUP REQUIRED: Run scripts/create-iam-role-for-external-secrets.ps1 once per cluster
+# Then update this value with the output role ARN
+externalSecretsIamRoleArn: ""  # Format: arn:aws:iam::ACCOUNT_ID:role/eksctl-CLUSTER-addon-iamserviceaccount-Role
+
 # Legacy - only used if pg-tileserv-db-secret.yaml is enabled (external secret is preferred)
 # databaseUrl: ""
 
