@@ -1,5 +1,5 @@
 # Multi-stage build for pg_tileserv
-FROM golang:1.21-alpine AS builder
+FROM golang:1.23-alpine AS builder
 
 # Install git and build dependencies
 RUN apk add --no-cache git
