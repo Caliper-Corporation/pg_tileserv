@@ -16,7 +16,7 @@ databaseSecretArn: "pg-tileserv/database-url"
 # This role must have permissions to read from AWS Secrets Manager
 # SETUP REQUIRED: Run scripts/create-iam-role-for-external-secrets.ps1 once per cluster
 # Then update this value with the output role ARN
-externalSecretsIamRoleArn: ""  # Format: arn:aws:iam::ACCOUNT_ID:role/eksctl-CLUSTER-addon-iamserviceaccount-Role
+externalSecretsIamRoleArn: "arn:aws:iam::110683733147:role/eksctl-saas-test-cluster-external-secrets-sa"
 
 # Legacy - only used if pg-tileserv-db-secret.yaml is enabled (external secret is preferred)
 # databaseUrl: ""
