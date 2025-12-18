@@ -8,8 +8,12 @@ env: shared
 releaseName: pg-tileserv
 
 # Single shared RDS instance for all environments
-# Replace with actual RDS endpoint
-databaseUrl: "postgresql://username:password@rds-endpoint.us-east-1.rds.amazonaws.com:5432/caliper"
+# AWS Secrets Manager configuration
+# The secret name or ARN in AWS Secrets Manager containing the database URL
+databaseSecretArn: "pg-tileserv/database-url"
+
+# Legacy - only used if pg-tileserv-db-secret.yaml is enabled (external secret is preferred)
+# databaseUrl: ""
 
 resources:
   requests:
