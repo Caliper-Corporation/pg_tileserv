@@ -3,7 +3,7 @@ name: Build, Push, and Deploy pg_tileserv
 on:
     push:
         branches:
-            - main
+            - deployment
 
 env:
     AWS_REGION: us-east-1

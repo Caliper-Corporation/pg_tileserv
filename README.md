@@ -6,7 +6,7 @@ Vector tile server for PostgreSQL/PostGIS databases deployed in Kubernetes.
 
 This repository maintains **two separate branches**:
 
-- **`main` branch** (this branch): Kubernetes deployment infrastructure
+- **`deployment` branch** (this branch): Kubernetes deployment infrastructure
   - Contains Dockerfile, Helm charts, GitHub Actions workflows
   - Used for deploying pg_tileserv to our EKS cluster
   - Pull and push deployment configuration changes here
@@ -133,8 +133,8 @@ resources:
 
 GitHub Actions workflow automatically deploys on:
 
-- Push to `dev`, `staging`, or `main` branches
-- Daily cron (7:30 AM UTC) for `main`
+- Push to `dev`, `staging`, or `deployment` branches
+- Daily cron (7:30 AM UTC) for `deployment`
 - Manual workflow dispatch
 
 All branches deploy to the same shared instance in `default` namespace.
