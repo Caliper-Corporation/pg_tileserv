@@ -1,0 +1,25 @@
+name: Maptitude Online issue sync
+
+# Moves referenced Caliper-Corporation/maptitude-online issues along the
+# "Maptitude Online" board. The logic lives in the maptitude-online repo.
+# Reference issues in PRs with:  Refs Caliper-Corporation/maptitude-online#123
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, converted_to_draft, edited, closed]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: mo-issue-sync-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    uses: Caliper-Corporation/maptitude-online/.github/workflows/sync-issue-status.yml@main
+    with:
+      project_number: ${{ vars.MO_PROJECT_NUMBER }}
+    secrets: inherit
