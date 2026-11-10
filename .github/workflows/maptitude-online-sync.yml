@@ -22,4 +22,5 @@ jobs:
     uses: Caliper-Corporation/maptitude-online/.github/workflows/sync-issue-status.yml@main
     with:
       project_number: ${{ vars.MO_PROJECT_NUMBER }}
-    secrets: inherit
+    secrets:
+      MO_PROJECT_TOKEN: ${{ secrets.MO_PROJECT_TOKEN }}
